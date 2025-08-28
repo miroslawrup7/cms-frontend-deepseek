@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="pl">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="./css/main.css?cache_bust=123">
+    <title>Panel administratora</title>
+</head>
+
+<body>
+    <main class="container">
+        <h1>Wnioski rejestracyjne</h1>
+        <table id="pendingTable">
+            <thead>
+                <tr>
+                    <th>Username</th>
+                    <th>E-mail</th>
+                    <th>Rola</th>
+                    <!-- ZMIANA 1: Dodano kolumnę Data utworzenia -->
+                    <th>Data utworzenia</th>
+                    <th>Akcje</th>
+                </tr>
+            </thead>
+            <tbody id="pendingBody">
+                <!-- ZMIANA 2: Zmieniono colspan z 4 na 5 -->
+                <tr>
+                    <td colspan="5">Ładowanie…</td>
+                </tr>
+            </tbody>
+        </table>
+    </main>
+    <script type="module" src="./js/nav.js?cache_bust=123"></script>
+    <script type="module" src="./js/header.js?cache_bust=123"></script>
+    <script type="module" src="./js/admin.js?cache_bust=123"></script>
+</body>
+
+</html>
