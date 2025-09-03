@@ -10,11 +10,12 @@ const crypto = require("crypto");
 const projectRoot = path.resolve(__dirname, "..");
 
 // TABLICA WYKLUCZEŃ - elementy, które NIE mają być uwzględniane
-const excludeItems = ["node_modules", ".git", "history", "scalacz_backendu", "scalacz_frontendu", "dist", "package-lock.json", "README.md"].map((item) => path.join(projectRoot, item));
+const excludeItems = ["node_modules", ".git", "history", "scalacz_backendu", "scalacz_frontendu", "dist", "package-lock.json", "README.md", "uploads"].map((item) => path.join(projectRoot, item));
 
 const outputName = "Frontend";
 const versionFile = path.join(process.cwd(), "project_version.json");
 const fileHistoryDir = path.join(process.cwd(), "history");
+const MAX_LINES_PER_FILE = 3000; // Maksymalna liczba linii na plik
 
 if (!fs.existsSync(fileHistoryDir)) fs.mkdirSync(fileHistoryDir, { recursive: true });
 
@@ -122,12 +123,50 @@ function isTextFile(filePath) {
     return textExtensions.includes(ext);
 }
 
+// Funkcja do dzielenia zawartości na części
+function splitContentIntoFiles(content, outputName, projectVersion) {
+    const lines = content.split("\n");
+    const files = [];
+    let currentPart = 1;
+    let currentLines = [];
+    let totalLines = 0;
+
+    for (const line of lines) {
+        currentLines.push(line);
+        totalLines++;
+
+        // Jeśli osiągnięto limit linii i jesteśmy na końcu pliku (linia z ==========)
+        if (totalLines >= MAX_LINES_PER_FILE && line.startsWith("==================================")) {
+            const partContent = currentLines.join("\n");
+            const outputFile = path.join(process.cwd(), `${outputName}_v${projectVersion}_part${currentPart}.txt`);
+
+            fs.writeFileSync(outputFile, partContent, "utf-8");
+            files.push(outputFile);
+
+            currentPart++;
+            currentLines = [];
+            totalLines = 0;
+        }
+    }
+
+    // Zapisz pozostałą zawartość jeśli coś zostało
+    if (currentLines.length > 0) {
+        const partContent = currentLines.join("\n");
+        const outputFile = path.join(process.cwd(), `${outputName}_v${projectVersion}_part${currentPart}.txt`);
+
+        fs.writeFileSync(outputFile, partContent, "utf-8");
+        files.push(outputFile);
+    }
+
+    return files;
+}
+
 // ======================
 // WERSJONOWANIE PLIKÓW I PROJEKTU
 // ======================
 
 const fileVersionsPath = path.join(process.cwd(), "file_versions.json");
-let fileVersions = fs.existsSync(fileVersionsPath) ? JSON.parse(fs.readFileSync(fileVersionsPath, "utf-8")) : {};
+const fileVersions = fs.existsSync(fileVersionsPath) ? JSON.parse(fs.readFileSync(fileVersionsPath, "utf-8")) : {};
 
 const projectVersionData = fs.existsSync(versionFile) ? JSON.parse(fs.readFileSync(versionFile, "utf-8")) : { version: 0, structureHash: "" };
 
@@ -145,7 +184,7 @@ function mergeFiles(excludePaths, outputName) {
     const rootPath = projectRoot;
 
     // Budowanie struktury i listy plików
-    let allFiles = [];
+    const allFiles = [];
     let structureStr = "";
 
     structureStr += buildStructureTree(rootPath, excludePaths, "");
@@ -154,7 +193,7 @@ function mergeFiles(excludePaths, outputName) {
     structureStr = structureStr.trim();
 
     // Hash struktury + zawartości wszystkich plików
-    let combinedHash = crypto.createHash("md5");
+    const combinedHash = crypto.createHash("md5");
     combinedHash.update(structureStr);
 
     allFiles.forEach((f) => {
@@ -173,7 +212,6 @@ function mergeFiles(excludePaths, outputName) {
     }
 
     const projectVersion = projectVersionData.version + 1;
-    const outputFile = path.join(process.cwd(), `${outputName}_v${projectVersion}.txt`);
 
     // Nagłówek globalny
     output += `${outputName} v.${projectVersion}\n\n`;
@@ -211,7 +249,7 @@ function mergeFiles(excludePaths, outputName) {
 
         // Zapis historii tylko jeśli zmiana
         if (!fileVersions[filePath] || fileVersions[filePath].hash !== hash) {
-            const safeName = path.basename(filePath).replace(/[\/\\]/g, "_");
+            const safeName = path.basename(filePath).replace(/[/\\]/g, "_");
             const histFile = path.join(fileHistoryDir, `${safeName}_v${version}.txt`);
 
             if (textFile) {
@@ -226,19 +264,23 @@ function mergeFiles(excludePaths, outputName) {
         // Używamy ścieżki względnej w nagłówku pliku
         const relativePath = path.relative(projectRoot, filePath);
 
-        output += `\n==================================\n`;
+        output += "\n==================================\n";
         output += `${relativePath} v.${version}\n`;
-        output += `==================================\n\n`;
+        output += "==================================\n\n";
         output += content + "\n";
     });
 
     fs.writeFileSync(fileVersionsPath, JSON.stringify(fileVersions, null, 2));
-    fs.writeFileSync(outputFile, output, "utf-8");
+
+    // Dzielenie zawartości na części
+    const outputFiles = splitContentIntoFiles(output, outputName, projectVersion);
+
     fs.writeFileSync(versionFile, JSON.stringify({ version: projectVersion, structureHash: currentHash }, null, 2));
 
-    console.log(`✔ Pliki scalone do: ${outputFile}`);
+    console.log(`✔ Pliki scalone do ${outputFiles.length} części:`);
+    outputFiles.forEach((file) => console.log(`  - ${file}`));
     console.log(`✔ Historia plików w: ${fileHistoryDir}`);
-    console.log(`✔ Przetworzono ${allFiles.length} plików`);
+    console.log(`✔ Przetworzono ${allFiles.length} plików źródłowych`);
 }
 
 // ======================
