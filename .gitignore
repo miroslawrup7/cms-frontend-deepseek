@@ -12,6 +12,7 @@ Thumbs.db
 **/logs/
 **/*.log
 
-**/scalacz_frontendu/
-
 **/dist/
+
+
+**/scalacz_frontendu/
