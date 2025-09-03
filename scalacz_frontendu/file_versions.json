@@ -1,0 +1,190 @@
+{
+  "D:\\Programowanie\\projekty inne\\Projekt CMS Grok kontynuacja po ChatGPT\\cms-project\\cms-frontend GROK\\src\\config\\config.json": {
+    "version": 1,
+    "hash": "b8a085683f39e6cfa63f33db73007de5"
+  },
+  "D:\\Programowanie\\projekty inne\\Projekt CMS Grok kontynuacja po ChatGPT\\cms-project\\cms-frontend GROK\\src\\js\\admin.js": {
+    "version": 2,
+    "hash": "09357a75746e26d7f54ab42f4c7ee47e"
+  },
+  "D:\\Programowanie\\projekty inne\\Projekt CMS Grok kontynuacja po ChatGPT\\cms-project\\cms-frontend GROK\\src\\js\\api.js": {
+    "version": 1,
+    "hash": "c384087f08e81bacfb5342671a20c463"
+  },
+  "D:\\Programowanie\\projekty inne\\Projekt CMS Grok kontynuacja po ChatGPT\\cms-project\\cms-frontend GROK\\src\\js\\article.js": {
+    "version": 5,
+    "hash": "fb90590a92366ed5225148e5f24bcfaf"
+  },
+  "D:\\Programowanie\\projekty inne\\Projekt CMS Grok kontynuacja po ChatGPT\\cms-project\\cms-frontend GROK\\src\\js\\header.js": {
+    "version": 1,
+    "hash": "44dce69af312d1974521749a1e8a99a6"
+  },
+  "D:\\Programowanie\\projekty inne\\Projekt CMS Grok kontynuacja po ChatGPT\\cms-project\\cms-frontend GROK\\src\\js\\login.js": {
+    "version": 1,
+    "hash": "39c168a083854bddd8726d781fa500a4"
+  },
+  "D:\\Programowanie\\projekty inne\\Projekt CMS Grok kontynuacja po ChatGPT\\cms-project\\cms-frontend GROK\\src\\js\\main.js": {
+    "version": 1,
+    "hash": "4ddc4fcd3ee7342afa9620e014500746"
+  },
+  "D:\\Programowanie\\projekty inne\\Projekt CMS Grok kontynuacja po ChatGPT\\cms-project\\cms-frontend GROK\\src\\js\\nav.js": {
+    "version": 1,
+    "hash": "c7f5828b77918d63a338030c98e40da5"
+  },
+  "D:\\Programowanie\\projekty inne\\Projekt CMS Grok kontynuacja po ChatGPT\\cms-project\\cms-frontend GROK\\src\\js\\new-article.js": {
+    "version": 1,
+    "hash": "7389443859f448cf2667a7944202d27a"
+  },
+  "D:\\Programowanie\\projekty inne\\Projekt CMS Grok kontynuacja po ChatGPT\\cms-project\\cms-frontend GROK\\src\\js\\register.js": {
+    "version": 1,
+    "hash": "33012c7d314a11a4aeacc1ddc4a046ac"
+  },
+  "D:\\Programowanie\\projekty inne\\Projekt CMS Grok kontynuacja po ChatGPT\\cms-project\\cms-frontend GROK\\src\\js\\toast.js": {
+    "version": 1,
+    "hash": "b83c2e85acc133d6cc634ab2e877f87c"
+  },
+  "D:\\Programowanie\\projekty inne\\Projekt CMS Grok kontynuacja po ChatGPT\\cms-project\\cms-frontend GROK\\src\\scss\\components\\_admin-panel.scss": {
+    "version": 1,
+    "hash": "a17dbd1361f7e574bc073fa4c00abd28"
+  },
+  "D:\\Programowanie\\projekty inne\\Projekt CMS Grok kontynuacja po ChatGPT\\cms-project\\cms-frontend GROK\\src\\scss\\components\\_comments.scss": {
+    "version": 1,
+    "hash": "d41d8cd98f00b204e9800998ecf8427e"
+  },
+  "D:\\Programowanie\\projekty inne\\Projekt CMS Grok kontynuacja po ChatGPT\\cms-project\\cms-frontend GROK\\src\\scss\\components\\_toast.scss": {
+    "version": 1,
+    "hash": "e41e96c28795d2ee613660afc4b65ba2"
+  },
+  "D:\\Programowanie\\projekty inne\\Projekt CMS Grok kontynuacja po ChatGPT\\cms-project\\cms-frontend GROK\\src\\scss\\main.scss": {
+    "version": 1,
+    "hash": "5afe0300279ef4aa7ffba7f627e21515"
+  },
+  "D:\\Programowanie\\projekty inne\\Projekt CMS Grok kontynuacja po ChatGPT\\cms-project\\cms-frontend GROK\\src\\admin.html": {
+    "version": 2,
+    "hash": "50f85586bce313cad719db060f7716e8"
+  },
+  "D:\\Programowanie\\projekty inne\\Projekt CMS Grok kontynuacja po ChatGPT\\cms-project\\cms-frontend GROK\\src\\article.html": {
+    "version": 1,
+    "hash": "153ae8b20ad7c5bcaedeff07651b1be4"
+  },
+  "D:\\Programowanie\\projekty inne\\Projekt CMS Grok kontynuacja po ChatGPT\\cms-project\\cms-frontend GROK\\src\\index.html": {
+    "version": 1,
+    "hash": "78871d0be15a76effa6e6d977bc9bcb3"
+  },
+  "D:\\Programowanie\\projekty inne\\Projekt CMS Grok kontynuacja po ChatGPT\\cms-project\\cms-frontend GROK\\src\\login.html": {
+    "version": 1,
+    "hash": "27105e3d048bb90d2d4e96c2d404011b"
+  },
+  "D:\\Programowanie\\projekty inne\\Projekt CMS Grok kontynuacja po ChatGPT\\cms-project\\cms-frontend GROK\\src\\new-article.html": {
+    "version": 1,
+    "hash": "d2e18255ba5090d51e9c776082dcafbc"
+  },
+  "D:\\Programowanie\\projekty inne\\Projekt CMS Grok kontynuacja po ChatGPT\\cms-project\\cms-frontend GROK\\src\\register.html": {
+    "version": 1,
+    "hash": "2850721194e54dae9c08c6285c51a550"
+  },
+  "D:\\Programowanie\\projekty inne\\Projekt CMS Grok kontynuacja po ChatGPT\\cms-project\\cms-frontend GROK\\gulpfile.js": {
+    "version": 1,
+    "hash": "007274821138934cf58d4646238f71d7"
+  },
+  "D:\\Programowanie\\projekty inne\\CMS DeepSeek\\cms-frontend DeepSeek\\.gitattributes": {
+    "version": 1,
+    "hash": "abc89807bf0b66cec65c1870ca483ddd"
+  },
+  "D:\\Programowanie\\projekty inne\\CMS DeepSeek\\cms-frontend DeepSeek\\.gitignore": {
+    "version": 1,
+    "hash": "b846415927405cfae79e070aff90f6b9"
+  },
+  "D:\\Programowanie\\projekty inne\\CMS DeepSeek\\cms-frontend DeepSeek\\gulpfile.js": {
+    "version": 1,
+    "hash": "007274821138934cf58d4646238f71d7"
+  },
+  "D:\\Programowanie\\projekty inne\\CMS DeepSeek\\cms-frontend DeepSeek\\package.json": {
+    "version": 1,
+    "hash": "cc52674ff9a53c0a65966567f4da839d"
+  },
+  "D:\\Programowanie\\projekty inne\\CMS DeepSeek\\cms-frontend DeepSeek\\src\\admin.html": {
+    "version": 1,
+    "hash": "50f85586bce313cad719db060f7716e8"
+  },
+  "D:\\Programowanie\\projekty inne\\CMS DeepSeek\\cms-frontend DeepSeek\\src\\article.html": {
+    "version": 1,
+    "hash": "153ae8b20ad7c5bcaedeff07651b1be4"
+  },
+  "D:\\Programowanie\\projekty inne\\CMS DeepSeek\\cms-frontend DeepSeek\\src\\config\\config.json": {
+    "version": 1,
+    "hash": "b8a085683f39e6cfa63f33db73007de5"
+  },
+  "D:\\Programowanie\\projekty inne\\CMS DeepSeek\\cms-frontend DeepSeek\\src\\index.html": {
+    "version": 1,
+    "hash": "78871d0be15a76effa6e6d977bc9bcb3"
+  },
+  "D:\\Programowanie\\projekty inne\\CMS DeepSeek\\cms-frontend DeepSeek\\src\\js\\admin.js": {
+    "version": 1,
+    "hash": "09357a75746e26d7f54ab42f4c7ee47e"
+  },
+  "D:\\Programowanie\\projekty inne\\CMS DeepSeek\\cms-frontend DeepSeek\\src\\js\\api.js": {
+    "version": 1,
+    "hash": "c384087f08e81bacfb5342671a20c463"
+  },
+  "D:\\Programowanie\\projekty inne\\CMS DeepSeek\\cms-frontend DeepSeek\\src\\js\\article.js": {
+    "version": 1,
+    "hash": "fb90590a92366ed5225148e5f24bcfaf"
+  },
+  "D:\\Programowanie\\projekty inne\\CMS DeepSeek\\cms-frontend DeepSeek\\src\\js\\header.js": {
+    "version": 1,
+    "hash": "44dce69af312d1974521749a1e8a99a6"
+  },
+  "D:\\Programowanie\\projekty inne\\CMS DeepSeek\\cms-frontend DeepSeek\\src\\js\\login.js": {
+    "version": 1,
+    "hash": "39c168a083854bddd8726d781fa500a4"
+  },
+  "D:\\Programowanie\\projekty inne\\CMS DeepSeek\\cms-frontend DeepSeek\\src\\js\\main.js": {
+    "version": 1,
+    "hash": "4ddc4fcd3ee7342afa9620e014500746"
+  },
+  "D:\\Programowanie\\projekty inne\\CMS DeepSeek\\cms-frontend DeepSeek\\src\\js\\nav.js": {
+    "version": 1,
+    "hash": "c7f5828b77918d63a338030c98e40da5"
+  },
+  "D:\\Programowanie\\projekty inne\\CMS DeepSeek\\cms-frontend DeepSeek\\src\\js\\new-article.js": {
+    "version": 1,
+    "hash": "7389443859f448cf2667a7944202d27a"
+  },
+  "D:\\Programowanie\\projekty inne\\CMS DeepSeek\\cms-frontend DeepSeek\\src\\js\\register.js": {
+    "version": 1,
+    "hash": "681376fc65640dc9104708cf52e3280a"
+  },
+  "D:\\Programowanie\\projekty inne\\CMS DeepSeek\\cms-frontend DeepSeek\\src\\js\\toast.js": {
+    "version": 1,
+    "hash": "b83c2e85acc133d6cc634ab2e877f87c"
+  },
+  "D:\\Programowanie\\projekty inne\\CMS DeepSeek\\cms-frontend DeepSeek\\src\\login.html": {
+    "version": 1,
+    "hash": "27105e3d048bb90d2d4e96c2d404011b"
+  },
+  "D:\\Programowanie\\projekty inne\\CMS DeepSeek\\cms-frontend DeepSeek\\src\\new-article.html": {
+    "version": 1,
+    "hash": "d2e18255ba5090d51e9c776082dcafbc"
+  },
+  "D:\\Programowanie\\projekty inne\\CMS DeepSeek\\cms-frontend DeepSeek\\src\\register.html": {
+    "version": 1,
+    "hash": "2850721194e54dae9c08c6285c51a550"
+  },
+  "D:\\Programowanie\\projekty inne\\CMS DeepSeek\\cms-frontend DeepSeek\\src\\scss\\components\\_admin-panel.scss": {
+    "version": 1,
+    "hash": "a17dbd1361f7e574bc073fa4c00abd28"
+  },
+  "D:\\Programowanie\\projekty inne\\CMS DeepSeek\\cms-frontend DeepSeek\\src\\scss\\components\\_comments.scss": {
+    "version": 1,
+    "hash": "d41d8cd98f00b204e9800998ecf8427e"
+  },
+  "D:\\Programowanie\\projekty inne\\CMS DeepSeek\\cms-frontend DeepSeek\\src\\scss\\components\\_toast.scss": {
+    "version": 1,
+    "hash": "e41e96c28795d2ee613660afc4b65ba2"
+  },
+  "D:\\Programowanie\\projekty inne\\CMS DeepSeek\\cms-frontend DeepSeek\\src\\scss\\main.scss": {
+    "version": 1,
+    "hash": "5afe0300279ef4aa7ffba7f627e21515"
+  }
+}

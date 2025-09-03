@@ -1,0 +1,403 @@
+import { getProfile, API_BASE } from './api.js'
+import { toast, toastError, confirmToast } from './toast.js'
+
+const urlParams = new URLSearchParams(window.location.search)
+const articleId = urlParams.get('id')
+
+const titleEl = document.getElementById('article-title')
+const contentEl = document.getElementById('article-content')
+const metaEl = document.getElementById('article-meta')
+const galleryEl = document.getElementById('article-gallery')
+
+let likesCount = 0
+let likedByMe = false
+
+async function loadArticle() {
+  titleEl.textContent = 'Ładowanie…'
+  contentEl.innerHTML = ''
+  metaEl.textContent = ''
+  galleryEl.innerHTML = ''
+
+  try {
+    const res = await fetch(`${API_BASE}/api/articles/${articleId}`, {
+      credentials: 'include'
+    })
+    const data = await res.json()
+    if (!res.ok) throw new Error(data?.message || `Błąd ${res.status}`)
+    const a = data.article || data
+
+    likesCount = Array.isArray(a.likes) ? a.likes.length : (a.likesCount || 0)
+
+    let me = null
+    try { me = await getProfile() } catch {}
+    if (me) {
+      const formSection = document.getElementById('comment-form-section')
+      if (formSection) formSection.style.display = 'block'
+    }
+    const isOwner = me && (me.role === 'admin' || String(me._id) === String(a.author?._id || a.author))
+    likedByMe = !!(me && Array.isArray(a.likes) && a.likes.some(id => String(id) === String(me._id)))
+
+    const images = Array.isArray(a.images) ? a.images : []
+    const commentCount = typeof a.commentCount === 'number' ? a.commentCount : (data.commentCount || 0)
+    const authorLabel = a.author?.email || a.author?.username || 'Autor'
+
+    titleEl.textContent = a.title || '(bez tytułu)'
+    contentEl.innerHTML = (a.content || '').replace(/\n/g, '<br>')
+
+    const parts = []
+    if (authorLabel) parts.push(authorLabel)
+    if (a.createdAt) parts.push(fmtDate(a.createdAt))
+    parts.push(`👍 <span id="likes-count">${likesCount}</span>`)
+    parts.push(`💬 <span id="comments-count">${commentCount}</span>`)
+
+    metaEl.innerHTML = `
+    <div class="meta-left">
+        ${parts.join(' • ')}
+    </div>
+    <div class="meta-right">
+        ${(!isOwner && me) ? `
+        <button id="like-btn"
+                class="btn btn--ghost btn--like"
+                aria-pressed="${likedByMe ? 'true' : 'false'}"
+                aria-label="${likedByMe ? 'Cofnij polubienie' : 'Polub artykuł'}">
+            <span class="like-label">${likedByMe ? 'Lubisz' : 'Lubię to'}</span>
+        </button>
+        ` : ''}
+        ${isOwner ? `
+        <a id="editArticleBtn" class="btn btn--ghost" href="/new-article.html?id=${a._id}">
+            Edytuj artykuł
+        </a>
+        <button id="deleteArticleBtn" class="btn btn--danger">Usuń artykuł</button>
+        ` : ''}
+    </div>
+    `
+
+    if (me && !isOwner) {
+      document.getElementById('like-btn')?.addEventListener('click', handleLikeToggle)
+    }
+
+    if (isOwner) {
+      document.getElementById('deleteArticleBtn')?.addEventListener('click', handleDeleteArticle)
+    }
+
+    renderGallery(images)
+  } catch (err) {
+    titleEl.textContent = 'Błąd'
+    metaEl.textContent = ''
+    contentEl.innerHTML = `<p style="color:crimson">${err.message || 'Nie udało się wczytać artykułu.'}</p>`
+    galleryEl.innerHTML = ''
+  }
+}
+
+async function loadComments() {
+  const container = document.getElementById('comments-container')
+  if (!container) return
+
+  container.innerHTML = '<p>Ładowanie komentarzy…</p>'
+
+  try {
+    const res = await fetch(`${API_BASE}/api/comments/${articleId}`)
+    const comments = await res.json()
+
+    let me = null
+    try { me = await getProfile() } catch {}
+
+    if (!Array.isArray(comments) || comments.length === 0) {
+      container.innerHTML = '<p>Brak komentarzy.</p>'
+      return
+    }
+
+    container.innerHTML = comments.map(c => {
+      const isAuthor = me && String(me._id) === String(c.author?._id || c.author)
+      const isAdmin  = me && me.role === 'admin'
+      const canEdit  = !!(isAuthor || isAdmin)
+
+      return `
+        <div class="comment" data-id="${c._id}">
+          <p class="comment-text">${c.text}</p>
+          <div class="comment-meta">
+            <span>${c.author?.username || 'Anonim'}</span> •
+            <span>${new Date(c.createdAt).toLocaleString()}</span>
+            ${canEdit ? `
+              <button class="btn--sm btn-edit-comment">Edytuj</button>
+              <button class="btn--sm btn--danger btn-delete-comment">Usuń</button>
+            ` : ''}
+          </div>
+        </div>
+      `
+    }).join('')
+
+    // 🔥 Aktualizacja licznika komentarzy w meta
+    const counterEl = document.getElementById('comments-count')
+    if (counterEl) {
+      const prev = parseInt(counterEl.textContent || '0', 10)
+      counterEl.textContent = String(prev + 1)
+    }
+
+  } catch (err) {
+    container.innerHTML = '<p style="color:crimson">Błąd ładowania komentarzy</p>'
+    toastError('Błąd ładowania komentarzy')
+  }
+}
+
+// ZMIANA 1: Usunięto duplikat renderComments – niepotrzebny, loadComments renderuje bezpośrednio
+// ZMIANA 2: Usunięto obsługę kliknięć na comments-list – starsza wersja, mniej kompletna
+
+document.getElementById('comments-container')?.addEventListener('click', async (e) => {
+  const container = e.currentTarget
+  const commentEl = e.target.closest('.comment')
+  if (!commentEl) return
+  const id = commentEl.dataset.id
+
+  // Usuń komentarz
+  if (e.target.closest('.btn-delete-comment')) {
+    const ok = await confirmToast({
+      message: 'Usunąć ten komentarz?',
+      okText: 'Usuń',
+      cancelText: 'Anuluj'
+    })
+    if (!ok) return
+
+    try {
+      const res = await fetch(`${API_BASE}/api/comments/${id}`, {
+        method: 'DELETE',
+        credentials: 'include'
+      })
+      if (!res.ok) throw new Error((await res.json())?.message || `Błąd ${res.status}`)
+      commentEl.remove()
+      toast('Komentarz usunięty.', 'success')
+
+      if (!container.querySelector('.comment')) {
+        container.innerHTML = '<p>Brak komentarzy.</p>'
+      }
+    } catch (err) {
+      toastError(err.message || 'Błąd usuwania komentarza.')
+    }
+    return
+  }
+
+  // Wejdź w tryb edycji
+  if (e.target.closest('.btn-edit-comment')) {
+    if (commentEl.classList.contains('is-editing') ||
+        commentEl.querySelector('.edit-comment-text')) return
+
+    const textWrap = commentEl.querySelector('.comment-text')
+    if (!textWrap) return
+
+    commentEl.dataset.originalHtml = textWrap.innerHTML
+    const oldText = textWrap.textContent
+    textWrap.innerHTML = `
+      <textarea class="edit-comment-text">${oldText}</textarea>
+      <div class="edit-actions">
+        <button class="btn--sm btn-save-comment">Zapisz</button>
+        <button class="btn--sm btn-cancel-edit">Anuluj</button>
+      </div>
+    `
+    commentEl.classList.add('is-editing')
+
+    const editBtn = commentEl.querySelector('.btn-edit-comment')
+    if (editBtn) editBtn.disabled = true
+
+    commentEl.querySelector('.edit-comment-text')?.focus()
+    return
+  }
+
+  // Anuluj edycję
+  if (e.target.closest('.btn-cancel-edit')) {
+    const textWrap = commentEl.querySelector('.comment-text')
+    const original = commentEl.dataset.originalHtml || textWrap?.textContent || ''
+    if (textWrap) textWrap.innerHTML = original
+
+    commentEl.classList.remove('is-editing')
+    delete commentEl.dataset.originalHtml
+
+    const editBtn = commentEl.querySelector('.btn-edit-comment')
+    if (editBtn) editBtn.disabled = false
+    return
+  }
+
+  // Zapisz edycję
+  if (e.target.closest('.btn-save-comment')) {
+    const area = commentEl.querySelector('.edit-comment-text')
+    const newText = (area?.value || '').trim()
+    if (newText.length < 6) {
+      toastError('Komentarz musi mieć co najmniej 6 znaków.')
+      area?.focus()
+      return
+    }
+
+    try {
+      const res = await fetch(`${API_BASE}/api/comments/${id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+        body: JSON.stringify({ text: newText })
+      })
+      const data = await res.json().catch(() => ({}))
+      if (!res.ok) throw new Error(data?.message || `Błąd ${res.status}`)
+
+      const textWrap = commentEl.querySelector('.comment-text')
+      if (textWrap) textWrap.innerHTML = data.text
+
+      toast('Komentarz zaktualizowany.', 'success')
+    } catch (err) {
+      toastError(err.message || 'Błąd zapisu komentarza.')
+      return
+    } finally {
+      commentEl.classList.remove('is-editing')
+      delete commentEl.dataset.originalHtml
+      const editBtn = commentEl.querySelector('.btn-edit-comment')
+      if (editBtn) editBtn.disabled = false
+    }
+  }
+})
+
+// Formularz komentarza
+document.getElementById("comment-form")?.addEventListener("submit", async (e) => {
+  e.preventDefault()
+
+  const textarea = document.getElementById("comment-text")
+  const commentText = (textarea?.value || "").trim()
+
+  if (!commentText || commentText.length < 6) {
+    toastError("Komentarz musi mieć przynajmniej 6 znaków.")
+    textarea?.focus()
+    return
+  }
+
+  try {
+    const res = await fetch(`${API_BASE}/api/comments/${articleId}`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      credentials: "include",
+      body: JSON.stringify({ text: commentText })
+    })
+
+    let data = {}
+    try { data = await res.json() } catch {}
+
+    if (!res.ok) {
+      const msg = data?.message || "Błąd serwera"
+      toastError(msg)
+
+      if (
+        res.status === 400 &&
+        /pusty po odfiltrowaniu|co najmniej 6 znaków|nie może być pusty/i.test(msg)
+      ) {
+        if (textarea) {
+          textarea.value = ""
+          textarea.focus()
+        }
+      }
+      return
+    }
+
+    if (textarea) textarea.value = ""
+    await loadComments()
+  } catch (err) {
+    toastError(err?.message || "Błąd połączenia z serwerem")
+    textarea?.focus()
+  }
+})
+
+function fmtDate(iso) {
+  if (!iso) return ''
+  try {
+    const d = new Date(iso)
+    return d.toLocaleDateString('pl-PL', { year: 'numeric', month: 'long', day: 'numeric' })
+  } catch { return '' }
+}
+
+function renderGallery(images = []) {
+  galleryEl.innerHTML = ''
+  if (!images || images.length === 0) return
+
+  const safe = images.map(src => `${API_BASE}/${String(src).replace(/^\/+/, '')}`)
+
+  const main = document.createElement('div')
+  main.className = 'gallery-main'
+  main.innerHTML = `<img src="${safe[0]}" alt="">`
+
+  const thumbs = document.createElement('div')
+  thumbs.className = 'thumbs'
+  thumbs.innerHTML = safe.map((s, i) =>
+    `<img src="${s}" alt="" data-idx="${i}" class="${i === 0 ? 'active' : ''}">`
+  ).join('')
+
+  thumbs.addEventListener('click', (e) => {
+    const img = e.target.closest('img[data-idx]')
+    if (!img) return
+    const idx = Number(img.dataset.idx)
+    main.querySelector('img').src = safe[idx]
+    thumbs.querySelectorAll('img').forEach(t => t.classList.remove('active'))
+    img.classList.add('active')
+  })
+
+  galleryEl.appendChild(main)
+  if (safe.length > 1) galleryEl.appendChild(thumbs)
+}
+
+let likeBusy = false
+
+async function handleLikeToggle(e) {
+  if (likeBusy) return
+  likeBusy = true
+  const btn = e.currentTarget
+  btn.disabled = true
+
+  const countEl = document.getElementById('likes-count')
+  const prevLiked = likedByMe
+  const prevCount = likesCount
+
+  likedByMe = !likedByMe
+  likesCount += likedByMe ? 1 : -1
+  if (countEl) countEl.textContent = String(Math.max(0, likesCount))
+  btn.querySelector('.like-label').textContent = likedByMe ? 'Lubisz' : 'Lubię to'
+  btn.setAttribute('aria-pressed', likedByMe ? 'true' : 'false')
+
+  try {
+    const res = await fetch(`${API_BASE}/api/articles/${articleId}/like`, {
+      method: 'POST',
+      credentials: 'include'
+    })
+    const data = await res.json()
+    if (!res.ok) throw new Error(data?.message || `Błąd ${res.status}`)
+  } catch (err) {
+    likedByMe = prevLiked
+    likesCount = prevCount
+    if (countEl) countEl.textContent = String(Math.max(0, likesCount))
+    btn.querySelector('.like-label').textContent = likedByMe ? 'Lubisz' : 'Lubię to'
+    btn.setAttribute('aria-pressed', likedByMe ? 'true' : 'false')
+    toastError(err.message || 'Błąd polubienia artykułu')
+  } finally {
+    likeBusy = false
+    btn.disabled = false
+  }
+}
+
+async function handleDeleteArticle() {
+  const confirmed = await confirmToast({
+    message: 'Usunąć ten artykuł?',
+    okText: 'Usuń',
+    cancelText: 'Anuluj'
+  })
+  if (!confirmed) return
+
+  try {
+    const res = await fetch(`${API_BASE}/api/articles/${articleId}`, {
+      method: 'DELETE',
+      credentials: 'include'
+    })
+    if (!res.ok) throw new Error((await res.json())?.message || `Błąd ${res.status}`)
+    toast('Artykuł usunięty.', 'success')
+    window.location.href = '/'
+  } catch (err) {
+    toastError(err.message || 'Błąd usuwania artykułu.')
+  }
+}
+
+// Inicjalizacja
+document.addEventListener('DOMContentLoaded', () => {
+  loadArticle()
+  loadComments()
+})
